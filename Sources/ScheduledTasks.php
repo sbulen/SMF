@@ -355,7 +355,7 @@ function scheduled_daily_digest()
 	$prefs = getNotifyPrefs(
 		array_keys($members),
 		array_merge(
-			array('msg_notify_type', 'msg_notify_pref', 'board_notify', 'topic_notify'),
+			array('msg_notify_type', 'msg_notify_pref', 'board_notify', 'topic_notify', 'announcements'),
 			array_map(function($id) { return 'board_notify_' . $id; }, array_keys(isset($notify['boards']) ? $notify['boards'] : array())),
 			array_map(function($id) { return 'topic_notify_' . $id; }, array_keys(isset($notify['topics']) ? $notify['topics'] : array()))
 		),
@@ -504,9 +504,10 @@ function scheduled_daily_digest()
 	{
 		$frequency = isset($prefs[$mid]['msg_notify_pref']) ? $prefs[$mid]['msg_notify_pref'] : 0;
 		$notify_types = !empty($prefs[$mid]['msg_notify_type']) ? $prefs[$mid]['msg_notify_type'] : 1;
+		$email_opt_in = !empty($prefs[$mid]['announcements']) ? $prefs[$mid]['announcements'] : 0;
 
 		// Did they not elect to choose this?
-		if ($frequency < 3 || $frequency == 4 && !$is_weekly || $frequency == 3 && $is_weekly || $notify_types == 4)
+		if (($frequency < 3) || (($frequency == 4) && !$is_weekly) || (($frequency == 3) && $is_weekly) || ($notify_types == 4) || ($email_opt_in == 0))
 			continue;
 
 		// Write to this member in their own language. $langs was collected from
